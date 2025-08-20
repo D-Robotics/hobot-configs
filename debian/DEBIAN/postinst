@@ -25,12 +25,17 @@ if [ ! -f /etc/lightdm/lightdm.conf.d/22-hobot-autologin.conf ]; then
 	cp /etc/lightdm/lightdm.conf.d/22-hobot-autologin.conf.default /etc/lightdm/lightdm.conf.d/22-hobot-autologin.conf
 fi
 
-if [ -e /etc/network/interfaces ]; then
-	if ! grep -q "iface eth0" /etc/network/interfaces; then
-		cp /etc/network/hobot-eth0.default /etc/network/interfaces
-	fi
-else
-	cp /etc/network/hobot-eth0.default /etc/network/interfaces
+if [ -e /etc/network ]; then
+	rm -rf /etc/network
+fi
+
+if [ ! -f /etc/NetworkManager/system-connections/netplan-eth0.nmconnection ]; then
+	chmod 600 /etc/NetworkManager/system-connections/netplan-eth0.nmconnection.default
+	mv /etc/NetworkManager/system-connections/netplan-eth0.nmconnection.default /etc/NetworkManager/system-connections/netplan-eth0.nmconnection
+fi
+
+if [ -f /etc/NetworkManager/system-connections/netplan-eth0.nmconnection.default ]; then
+	rm /etc/NetworkManager/system-connections/netplan-eth0.nmconnection.default
 fi
 
 chmod 777 /etc/set_mac_address.sh
